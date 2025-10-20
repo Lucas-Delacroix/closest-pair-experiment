@@ -1,12 +1,12 @@
 from __future__ import annotations
 import math
-from typing import List, NamedTuple
+from typing import List, Tuple, NamedTuple
 
 class Point(NamedTuple):
     x: float
     y: float
 
-ClosestPairResult = Tuple[float, Tuple[Point, Point]]  # (distância, (pontoA, pontoB))
+ClosestPairResult = Tuple[float, Tuple[Point, Point]] # (distância, (pontoA, pontoB))
 
 
 class ClosestPairBase:
@@ -37,7 +37,7 @@ class ClosestPairBase:
     
     def run(self, points: List[Point]) -> ClosestPairResult:
         """
-        
+
         Deve ser implementado por cada subclasse.
         Retorna uma tupla (distância, (pontoA, pontoB)).
 
