@@ -1,4 +1,4 @@
-from typing import List, Tuple, NamedTuple, Callable, Iterable, Optional, Dict, Any
+from typing import List, Tuple, NamedTuple, Callable, Iterable, Optional, Dict, Any, TypeAlias
 import math, time, csv, statistics
 
 
@@ -6,6 +6,8 @@ class Point(NamedTuple):
     x: float
     y: float
 
+Distance: TypeAlias = float
+Seconds: TypeAlias  = float
 ClosestPairResult = Tuple[float, Tuple[Point, Point]]
 DatasetFn = Callable[[int, int], List[Point]]
 
@@ -18,14 +20,14 @@ class ClosestPairBase:
     """
 
     @staticmethod
-    def dist(p: Point, q: Point) -> float:
+    def dist(p: Point, q: Point) -> Distance:
         """
         Calcula a distância euclidiana entre dois pontos 2D usando math.hypot() (com sqrt).
         """
-        return math.hypot(p[0] - q[0], p[1] - q[1])
+        return math.hypot(p.x - q.x, p.y - q.y)
 
     @staticmethod
-    def dist2(p: Point, q: Point) -> float:
+    def dist2(p: Point, q: Point) -> Distance:
         """
         Distância ao quadrado (sem sqrt)
         """
@@ -40,7 +42,12 @@ class ClosestPairBase:
         """
         raise NotImplementedError
 
-    def time_once(self, points: List[Point]) -> Tuple[float, ClosestPairResult]:
+    def time_once(self, points: List[Point]) -> Tuple[Seconds, ClosestPairResult]:
+        """
+        Mede o tempo exclusivo do algoritmo
+        :param points:
+        :return menor distancia encontrada e os pontos:
+        """
         t0 = time.perf_counter()
         res = self.run(points)
         t1 = time.perf_counter()
@@ -52,19 +59,16 @@ class ClosestPairBase:
             dataset: DatasetFn,
             trials: int = 10,
             warmup: bool = True,
-            max_time_per_trial: Optional[float] = None,  # aborta n atual se exceder
-            verify_with: Optional["ClosestPairBase"] = None,  # algoritmo de referência p/ checagem
-            verify_tolerance: float = 1e-9,
+            max_time_per_trial: Optional[Seconds] = None
     ):
         """
         Retorna: list[(n, mean, std, trials_done, mismatches)]
         - dataset(n, seed) deve gerar SEMPRE os mesmos dados para mesma (n, seed).
-        - Se verify_with é fornecido, compara distâncias e conta mismatches.
         - Se max_time_per_trial for definido, aborta trials do n atual ao exceder.
         """
         rows = []
         for n in sizes:
-            times = []
+            times: List[Seconds] = []
             mismatches = 0
             reps = trials + (1 if warmup else 0)
             aborted = False
@@ -75,33 +79,31 @@ class ClosestPairBase:
                 if seed or not warmup:
                     times.append(t)
 
-                    if verify_with is not None:
-                        dv, _ = verify_with.time_once(pts)[1]
-                        if not math.isclose(d, dv, rel_tol=0.0, abs_tol=verify_tolerance):
-                            mismatches += 1
-
                 if max_time_per_trial is not None and t > max_time_per_trial:
                     aborted = True
                     break
 
             if times:
-                rows.append((
-                    n,
-                    statistics.mean(times),
-                    statistics.pstdev(times),
-                    len(times),
-                    mismatches
-                ))
+                rows.append({
+                    "algo": self.name,
+                    "n": int(n),
+                    "mean": statistics.mean(times),
+                    "std": statistics.pstdev(times),
+                    "trials": len(times),
+                    "mismatches": mismatches
+                })
             if aborted:
                 continue
-
         return rows
+
+
+
 
     @staticmethod
     def export_csv(path: str, rows: List[Dict[str, Any]]) -> None:
         if not rows:
             return
-        keys = ["algo", "n", "mean", "std", "trials", "mismatches"]
+        keys = ["algoritmo", "n", "mean", "std", "trials", "mismatches"]
         with open(path, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=keys)
             w.writeheader()
