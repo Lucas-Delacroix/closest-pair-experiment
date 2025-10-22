@@ -11,12 +11,15 @@ if __name__ == "__main__":
     os.makedirs("results/csv", exist_ok=True)
     os.makedirs("results/figures", exist_ok=True)
 
-    # sizes_all = linspace_int(100, 1_000_000, 100)
-    # sizes_small = [n for n in sizes_all if n <= 30_000]
+    # Entrada completa algoritmo D&C
+    sizes_all = linspace_int(100, 1_000_000, 100)
+
+    # Entrada para o algoritmo BF adaptada devido a entrada grande
+    sizes_small = [n for n in sizes_all if n <= 30_000]
 
     # Entrada pequena para fins de teste
-    sizes_all = linspace_int(100, 2_000, 10)
-    sizes_small = sizes_all
+    # sizes_all = linspace_int(100, 2_000, 10)
+    # sizes_small = sizes_all
 
     dataset = make_dataset(mode="mixed")
 
