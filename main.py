@@ -12,9 +12,12 @@ if __name__ == "__main__":
     os.makedirs("results/figures", exist_ok=True)
 
     # sizes_all = linspace_int(10, 2000, 5)
-    sizes_all = linspace_int(100, 10_000, 20)
+    # sizes_all = linspace_int(100, 10_000, 20)
     # sizes_all = linspace_int(100, 1_000_000, 100)
-    sizes_small = [n for n in sizes_all if n <= 30_000]
+    # sizes_small = [n for n in sizes_all if n <= 30_000]
+
+    sizes_all = linspace_int(100, 2_000, 10)  # 10 tamanhos entre 100 e 2000
+    sizes_small = sizes_all  # brute e D&C rodam em todos
 
     dataset = make_dataset(mode="mixed")
 
