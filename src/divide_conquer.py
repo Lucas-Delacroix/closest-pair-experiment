@@ -28,6 +28,7 @@ class ClosestPairDivideConquer(ClosestPairBase):
         for p in Py:
             (Qy if p in qset else Ry).append(p)
 
+        #T(n) = 2T(n/2) + O(n)
         dl2, pair_l = self._rec(Qx, Qy)
         dr2, pair_r = self._rec(Rx, Ry)
         d2, best = (dl2, pair_l) if dl2 < dr2 else (dr2, pair_r)
