@@ -103,7 +103,7 @@ class ClosestPairBase:
     def export_csv(path: str, rows: List[Dict[str, Any]]) -> None:
         if not rows:
             return
-        keys = ["algoritmo", "n", "mean", "std", "trials", "mismatches"]
+        keys = ["algo", "n", "mean", "std", "trials", "mismatches"]
         with open(path, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=keys)
             w.writeheader()
