@@ -44,9 +44,7 @@ class ClosestPairBase:
 
     def time_once(self, points: List[Point]) -> Tuple[Seconds, ClosestPairResult]:
         """
-        Mede o tempo exclusivo do algoritmo. Retorna o tempo e (distancia, (pontoA, pontoB))
-        :param points:
-        :return menor distancia encontrada e os pontos:
+        Mede o tempo do algoritmo e retorna (tempo_em_segundos, (dist, (p,q))).
         """
         t0 = time.perf_counter()
         res = self.run(points)
