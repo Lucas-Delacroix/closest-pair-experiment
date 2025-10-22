@@ -97,12 +97,11 @@ class ClosestPairBase:
         return rows
 
 
-
-
-    @staticmethod
-    def export_csv(path: str, rows: List[Dict[str, Any]]) -> None:
+    def export_csv(self, path: str, rows: List[Dict[str, Any]]) -> None:
         if not rows:
             return
+        for r in rows:
+            r.setdefault("algo", self.name)
         keys = ["algo", "n", "mean", "std", "trials", "mismatches"]
         with open(path, "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=keys)
