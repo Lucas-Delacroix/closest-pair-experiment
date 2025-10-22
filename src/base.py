@@ -44,7 +44,7 @@ class ClosestPairBase:
 
     def time_once(self, points: List[Point]) -> Tuple[Seconds, ClosestPairResult]:
         """
-        Mede o tempo exclusivo do algoritmo
+        Mede o tempo exclusivo do algoritmo. Retorna o tempo e (distancia, (pontoA, pontoB))
         :param points:
         :return menor distancia encontrada e os pontos:
         """
@@ -59,7 +59,9 @@ class ClosestPairBase:
             dataset: DatasetFn,
             trials: int = 10,
             warmup: bool = True,
-            max_time_per_trial: Optional[Seconds] = None
+            max_time_per_trial: Optional[Seconds] = None,
+            verify_with: Optional["ClosestPairBase"] = None,
+            verify_tolerance: float = 1e-9,
     ):
         """
         Retorna: list[(n, mean, std, trials_done, mismatches)]
@@ -76,8 +78,15 @@ class ClosestPairBase:
             for seed in range(reps):
                 pts = dataset(n, seed)
                 t, (d, pair) = self.time_once(pts)
+
                 if seed or not warmup:
                     times.append(t)
+
+                    if verify_with is not None:
+                        dv, _ = verify_with.run(pts)
+
+                        if not math.isclose(d, dv, rel_tol=0.0, abs_tol=verify_tolerance):
+                            mismatches += 1
 
                 if max_time_per_trial is not None and t > max_time_per_trial:
                     aborted = True

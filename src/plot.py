@@ -1,6 +1,6 @@
-from __future__ import annotations
 from typing import List, Dict, Any, Tuple
 import matplotlib.pyplot as plt
+import os, csv
 
 def _align_by_n(rows_a: List[Dict[str,Any]], rows_b: List[Dict[str,Any]]):
     byn_a = {r["n"]: r for r in rows_a}
@@ -14,7 +14,7 @@ def plot_comparison(
     brute_rows: List[Dict[str,Any]],
     dc_rows: List[Dict[str,Any]],
     out_path: str = "results/figures/closest_pair_small.png",
-    title: str = "Comparação direta (onde ambos rodam)"
+    title: str = "Comparação direta"
 ):
     ns, A, B = _align_by_n(brute_rows, dc_rows)
     if not ns:
@@ -37,8 +37,8 @@ def plot_comparison(
 
 def plot_single(
     rows: List[Dict[str,Any]],
-    out_path: str = "results/figures/closest_pair_large.p     ng",
-    title: str = "Escala grande (apenas um algoritmo)"
+    out_path: str = "results/figures/closest_pair_large.png",
+    title: str = "Escala grande "
 ):
     rows = sorted(rows, key=lambda r: r["n"])
     ns = [r["n"] for r in rows]
@@ -55,3 +55,13 @@ def plot_single(
     plt.tight_layout()
     plt.savefig(out_path, dpi=150)
     print("Figura salva:", out_path)
+
+
+
+def save_points_csv(path: str, points):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["x","y"])
+        for p in points:
+            w.writerow([p.x, p.y])
