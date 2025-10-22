@@ -5,14 +5,17 @@ from src.datasets import make_dataset
 from src.plot import plot_comparison, plot_single
 from functools import lru_cache
 
+CACHE_N_MAX = 30_000
 gen = make_dataset(mode="mixed")
 
-@lru_cache(maxsize=None)
-def _cached_points(n: int, seed: int):
+@lru_cache(maxsize=256)
+def _cached_small(n: int, seed: int):
     return tuple(gen(n, seed))
 
 def dataset(n: int, seed: int):
-    return list(_cached_points(n, seed))
+    if n <= CACHE_N_MAX: # Vai servir para evitar stackOverFlow na cache remover dps
+        return list(_cached_small(n, seed))
+    return gen(n, seed)
 
 def linspace_int(a,b,k): return np.linspace(a,b,k,dtype=int).tolist()
 
