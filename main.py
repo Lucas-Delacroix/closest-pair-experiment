@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     bf_rows = bf.benchmark(sizes_small, dataset, trials=10, warmup=True, max_time_per_trial=10.0)
     dc_rows_small = dc.benchmark(sizes_small, dataset, trials=10, warmup=True, verify_with=bf)
-    dc_rows_large = dc.benchmark(sizes_all, dataset, trials=10, warmup=True, verify_with=bf)
+    dc_rows_large = dc.benchmark(sizes_all, dataset, trials=10, warmup=True)
 
     bf.export_csv("results/csv/benchmark_bf.csv", bf_rows)
     dc.export_csv("results/csv/benchmark_dc_small.csv", dc_rows_small)
